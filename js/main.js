@@ -6308,20 +6308,20 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 	// ----------------- CHANGE COLOR -----------------
 	function change_color(color) {
 		if (galleryFadeActive === 1) {
-			$galleryImageSwap1b.attr('src', 'img/8948728/' + color + '-1.jpg');
-			$galleryImageSwap2b.attr('src', 'img/8948728/' + color + '-2.jpg');
-			$galleryImageSwap3b.attr('src', 'img/8948728/' + color + '-3.jpg');
-			$galleryImageSwap4b.attr('src', 'img/8948728/' + color + '-4.jpg');
-			$galleryImageSwap5b.attr('src', 'img/8948728/' + color + '-5.jpg');
+			$galleryImageSwap1b.attr('src', 'img/p8948728/' + color + '-1.jpg');
+			$galleryImageSwap2b.attr('src', 'img/p8948728/' + color + '-2.jpg');
+			$galleryImageSwap3b.attr('src', 'img/p8948728/' + color + '-3.jpg');
+			$galleryImageSwap4b.attr('src', 'img/p8948728/' + color + '-4.jpg');
+			$galleryImageSwap5b.attr('src', 'img/p8948728/' + color + '-5.jpg');
 			$gallery.addClass('fade2');
 			$gallery.removeClass('fade1');
 			galleryFadeActive = 2;
 		} else {
-			$galleryImageSwap1a.attr('src', 'img/8948728/' + color + '-1.jpg');
-			$galleryImageSwap2a.attr('src', 'img/8948728/' + color + '-2.jpg');
-			$galleryImageSwap3a.attr('src', 'img/8948728/' + color + '-3.jpg');
-			$galleryImageSwap4a.attr('src', 'img/8948728/' + color + '-4.jpg');
-			$galleryImageSwap5a.attr('src', 'img/8948728/' + color + '-5.jpg');
+			$galleryImageSwap1a.attr('src', 'img/p8948728/' + color + '-1.jpg');
+			$galleryImageSwap2a.attr('src', 'img/p8948728/' + color + '-2.jpg');
+			$galleryImageSwap3a.attr('src', 'img/p8948728/' + color + '-3.jpg');
+			$galleryImageSwap4a.attr('src', 'img/p8948728/' + color + '-4.jpg');
+			$galleryImageSwap5a.attr('src', 'img/p8948728/' + color + '-5.jpg');
 			$gallery.addClass('fade1');
 			$gallery.removeClass('fade2');
 			galleryFadeActive = 1;
