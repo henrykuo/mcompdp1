@@ -6174,7 +6174,7 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 	'use strict';
 
 	//import _ from 'lodash';
-	var SwipeListener, $, lg, $gallery, $content, $contentPanel, $contentPanelInner, $contentShim, $pullUpButton, $inspoDrawer, $inspoContent, $inspoClose, $inspoTab, $inspoBoardGroup, $overlay, $colorOption, $summary, $freeGift, $freeGiftDetails, $freeGiftDetailsContents, contentFixedPanelHeight, content_fixed, inspo_drawer_fix_point, inspo_drawer_visible, inspo_drawer_active, inspo_top_original, inspo_active_board_num, free_gift_open, container, listener;
+	var SwipeListener, $, lg, $gallery, $content, $contentPanel, $contentPanelInner, $contentShim, $pullUpButton, $inspoDrawer, $inspoContent, $inspoClose, $inspoTab, $inspoBoardGroup, $overlay, $colorOption, $summary, $summaryShim, $freeGift, $freeGiftDetails, $freeGiftDetailsContents, $swatchOption1, $swatchOption2, $swatchOption3, $galleryImageSwap1a, $galleryImageSwap2a, $galleryImageSwap3a, $galleryImageSwap4a, $galleryImageSwap5a, $galleryImageSwap1b, $galleryImageSwap2b, $galleryImageSwap3b, $galleryImageSwap4b, $galleryImageSwap5b, contentFixedPanelHeight, content_fixed, inspo_drawer_fix_point, inspo_drawer_visible, inspo_drawer_active, inspo_top_original, inspo_active_board_num, free_gift_open, activeSwatch, galleryFadeActive, container, listener;
 
 	// =======================================================================================
 	// FUNCTIONS
@@ -6182,12 +6182,16 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 	function fix_content() {
 		// Get distance of gallery from bottom. We're using the gallery to measure toggle point, because content height may shift. We cannot use a fixed/determined point. We have to constantly calculate at every scroll.
 		var galleryDistFromBottom = $gallery[0].getBoundingClientRect().bottom - window.innerHeight;
+		// Get height of summary to measure how much need to shift top position of colors to show in the fixed bar
+		var topOffset = $summary.outerHeight() + 4;
 		// Toggle fixed class on content
 		if (galleryDistFromBottom <= -contentFixedPanelHeight) {
 			// Unfix it
 			if (content_fixed === 0) {
 				$content.removeClass('fixed');
 				$contentShim.hide();
+				// Reset position colors when not in fixed bar
+				$summaryShim.css({ 'top': 0 });
 				content_fixed = 1;
 			}
 		} else {
@@ -6197,11 +6201,13 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 				$contentShim.show();
 				content_fixed = 0;
 			}
+			// Reposition colors to show in fixed bar
+			$summaryShim.css({ 'top': -topOffset });
 		}
 	}
 	// ----------------- SCROLL TO CONTENT -----------------
 	function scroll_to_content(speed) {
-		var scroll_target = $contentShim.offset().top - window.innerHeight / 2;
+		var scroll_target = $contentShim.offset().top - window.innerHeight * .2;
 		$('html, body').animate({
 			scrollTop: scroll_target
 		}, {
@@ -6240,8 +6246,10 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 	function open_inspo_drawer() {
 		if (inspo_drawer_active === 0) {
 			$inspoDrawer.removeClass('collapsed');
+			$inspoDrawer.addClass('active');
 			$overlay.addClass('active');
-			$('body').css({ 'height': '100vh', 'overflow': 'hidden' });
+			$overlay.scrollTop(10000); // Using overlay with invisible scrolling with a long empty div within. Setting scroll position here so neither scrolling up or down will be anywhere close to scroll limit.
+			//$('body').css({'height': window.innerHeight, 'overflow': 'hidden'});
 			inspo_drawer_active = 1;
 		}
 	}
@@ -6249,6 +6257,7 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 	function close_inspo_drawer() {
 		if (inspo_drawer_active === 1) {
 			$inspoDrawer.addClass('collapsed');
+			$inspoDrawer.removeClass('active');
 			$overlay.removeClass('active');
 			// Reset Inspo Drawer State
 			$inspoBoardGroup.css({ 'left': 0 });
@@ -6256,12 +6265,11 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 			$inspoDrawer.find('.tab:first-child').addClass('active');
 			inspo_active_board_num = 1;
 			$inspoContent.scrollTop(0);
-
-			$('body').css({ 'height': 'auto', 'overflow': 'visible' });
+			//$('body').css({'height': 'auto', 'overflow': 'visible'});
 			inspo_drawer_active = 0;
 		}
 	}
-	// ----------------- CLOSE INSPO DRAWER -----------------
+	// ----------------- SWITCH INSPO BOARD -----------------
 	function switch_inspo_board(num) {
 		//lg(`switch to board ${num}`);
 		inspo_active_board_num = num;
@@ -6283,6 +6291,41 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 	function close_free_gift() {
 		$freeGift.removeClass('expanded');
 		$freeGiftDetails.css({ 'height': 0 });
+	}
+	// ----------------- CHANGE COLOR INIT -----------------
+	function change_color_init(num) {
+		if (num === 1 && activeSwatch !== 1) {
+			change_color('navy');
+			activeSwatch = 1;
+		} else if (num === 2 && activeSwatch !== 2) {
+			change_color('champagne');
+			activeSwatch = 2;
+		} else if (num === 3 && activeSwatch !== 3) {
+			change_color('purple');
+			activeSwatch = 3;
+		}
+	}
+	// ----------------- CHANGE COLOR -----------------
+	function change_color(color) {
+		if (galleryFadeActive === 1) {
+			$galleryImageSwap1b.attr('src', 'img/8948728/' + color + '-1.jpg');
+			$galleryImageSwap2b.attr('src', 'img/8948728/' + color + '-2.jpg');
+			$galleryImageSwap3b.attr('src', 'img/8948728/' + color + '-3.jpg');
+			$galleryImageSwap4b.attr('src', 'img/8948728/' + color + '-4.jpg');
+			$galleryImageSwap5b.attr('src', 'img/8948728/' + color + '-5.jpg');
+			$gallery.addClass('fade2');
+			$gallery.removeClass('fade1');
+			galleryFadeActive = 2;
+		} else {
+			$galleryImageSwap1a.attr('src', 'img/8948728/' + color + '-1.jpg');
+			$galleryImageSwap2a.attr('src', 'img/8948728/' + color + '-2.jpg');
+			$galleryImageSwap3a.attr('src', 'img/8948728/' + color + '-3.jpg');
+			$galleryImageSwap4a.attr('src', 'img/8948728/' + color + '-4.jpg');
+			$galleryImageSwap5a.attr('src', 'img/8948728/' + color + '-5.jpg');
+			$gallery.addClass('fade1');
+			$gallery.removeClass('fade2');
+			galleryFadeActive = 1;
+		}
 	}
 	// =======================================================================================
 	// EVENTS
@@ -6313,9 +6356,23 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 			$overlay = $('.overlay');
 			$colorOption = $('.product-option.color').find('.option');
 			$summary = $('.content').find('.summary');
+			$summaryShim = $('.content').find('.summary-shim');
 			$freeGift = $('.free-gift');
 			$freeGiftDetails = $freeGift.find('.details');
 			$freeGiftDetailsContents = $freeGiftDetails.find('.contents');
+			$swatchOption1 = $('.product-option.color').find('.option-1');
+			$swatchOption2 = $('.product-option.color').find('.option-2');
+			$swatchOption3 = $('.product-option.color').find('.option-3');
+			$galleryImageSwap1a = $('.gallery').find('.swap-1').find('.fade1').find('img');
+			$galleryImageSwap2a = $('.gallery').find('.swap-2').find('.fade1').find('img');
+			$galleryImageSwap3a = $('.gallery').find('.swap-3').find('.fade1').find('img');
+			$galleryImageSwap4a = $('.gallery').find('.swap-4').find('.fade1').find('img');
+			$galleryImageSwap5a = $('.gallery').find('.swap-5').find('.fade1').find('img');
+			$galleryImageSwap1b = $('.gallery').find('.swap-1').find('.fade2').find('img');
+			$galleryImageSwap2b = $('.gallery').find('.swap-2').find('.fade2').find('img');
+			$galleryImageSwap3b = $('.gallery').find('.swap-3').find('.fade2').find('img');
+			$galleryImageSwap4b = $('.gallery').find('.swap-4').find('.fade2').find('img');
+			$galleryImageSwap5b = $('.gallery').find('.swap-5').find('.fade2').find('img');
 
 			// =======================================================================================
 			// VARS
@@ -6327,7 +6384,9 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 			inspo_top_original = $inspoDrawer.css('top');
 			inspo_active_board_num = 1;
 			free_gift_open = 0;
-			$inspoDrawer.on('click', function () {
+			activeSwatch = 1;
+			galleryFadeActive = 1;
+			$inspoDrawer.on('click', function (e) {
 				open_inspo_drawer();
 			});
 			$overlay.on('click', function () {
@@ -6362,6 +6421,41 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 					}
 				}
 			});
+
+			/* 
+   let cursor_track_y_start = 0;
+   let cursor_track_y = 0;
+   let cursor_track_y_diff = 0;
+   
+   let window_scroll_track_start = 0;
+   let window_scroll_track = 0;
+   let window_scroll_diff = 0;
+   
+   $contentPanel
+   	.on('touchstart', function(e){
+   		//cursor_track_y_start = e.originalEvent.touches[0].pageY;
+   		window_scroll_track_start = $(window).scrollTop();
+   		//lg(`${cursor_track_y_start}`);
+   	})
+   	.on('touchmove', function(e){
+   		//cursor_track_y = e.originalEvent.touches[0].pageY;
+   		window_scroll_track = $(window).scrollTop();
+   		window_scroll_diff = window_scroll_track - window_scroll_track_start;
+   		//lg(`${window_scroll_diff}`);
+   		if (window_scroll_diff > 5) {
+   			//lg('START EXPANDING THE FIXED PANEL');
+   			$content.css({'height': content_original_height + (window_scroll_diff * 1.5)});
+   		}
+   	})
+   	.on('touchend', function(e){
+   		$content.css({'height': content_original_height});
+   		lg(`${window_scroll_diff}`);
+   		if (window_scroll_diff > 100) {
+   			scroll_to_content(450);
+   		}
+   	});
+    */
+
 			$colorOption.on('click', function () {
 				$colorOption.removeClass('selected');
 				$(this).addClass('selected');
@@ -6375,6 +6469,15 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 					free_gift_open = 0;
 				}
 			});
+			$swatchOption1.on('click', function () {
+				change_color_init(1);
+			});
+			$swatchOption2.on('click', function () {
+				change_color_init(2);
+			});
+			$swatchOption3.on('click', function () {
+				change_color_init(3);
+			});
 			// =======================================================================================
 			// INIT
 
@@ -6387,6 +6490,8 @@ $__System.register('7', ['3', '5', '6'], function (_export) {
 		}
 	};
 });
+
+//content_original_height = $content.outerHeight(),
 $__System.register('1', ['6', '7'], function (_export) {
 
 													// Global
