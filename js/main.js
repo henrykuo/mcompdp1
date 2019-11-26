@@ -3,7 +3,427 @@
 (["1"], [], false, function($__System) {
 var require = this.require, exports = this.exports, module = this.module;
 !function(e){function n(e,n){e=e.replace(l,"");var r=e.match(u),t=(r[1].split(",")[n]||"require").replace(s,""),i=p[t]||(p[t]=new RegExp(a+t+f,"g"));i.lastIndex=0;for(var o,c=[];o=i.exec(e);)c.push(o[2]||o[3]);return c}function r(e,n,t,o){if("object"==typeof e&&!(e instanceof Array))return r.apply(null,Array.prototype.splice.call(arguments,1,arguments.length-1));if("string"==typeof e&&"function"==typeof n&&(e=[e]),!(e instanceof Array)){if("string"==typeof e){var l=i.get(e);return l.__useDefault?l["default"]:l}throw new TypeError("Invalid require")}for(var a=[],f=0;f<e.length;f++)a.push(i["import"](e[f],o));Promise.all(a).then(function(e){n&&n.apply(null,e)},t)}function t(t,l,a){"string"!=typeof t&&(a=l,l=t,t=null),l instanceof Array||(a=l,l=["require","exports","module"].splice(0,a.length)),"function"!=typeof a&&(a=function(e){return function(){return e}}(a)),void 0===l[l.length-1]&&l.pop();var f,u,s;-1!=(f=o.call(l,"require"))&&(l.splice(f,1),t||(l=l.concat(n(a.toString(),f)))),-1!=(u=o.call(l,"exports"))&&l.splice(u,1),-1!=(s=o.call(l,"module"))&&l.splice(s,1);var p={name:t,deps:l,execute:function(n,t,o){for(var p=[],c=0;c<l.length;c++)p.push(n(l[c]));o.uri=o.id,o.config=function(){},-1!=s&&p.splice(s,0,o),-1!=u&&p.splice(u,0,t),-1!=f&&p.splice(f,0,function(e,t,l){return"string"==typeof e&&"function"!=typeof t?n(e):r.call(i,e,t,l,o.id)});var d=a.apply(-1==u?e:t,p);return"undefined"==typeof d&&o&&(d=o.exports),"undefined"!=typeof d?d:void 0}};if(t)c.anonDefine||c.isBundle?c.anonDefine&&c.anonDefine.name&&(c.anonDefine=null):c.anonDefine=p,c.isBundle=!0,i.registerDynamic(p.name,p.deps,!1,p.execute);else{if(c.anonDefine&&!c.anonDefine.name)throw new Error("Multiple anonymous defines in module "+t);c.anonDefine=p}}var i=$__System,o=Array.prototype.indexOf||function(e){for(var n=0,r=this.length;r>n;n++)if(this[n]===e)return n;return-1},l=/(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/gm,a="(?:^|[^$_a-zA-Z\\xA0-\\uFFFF.])",f="\\s*\\(\\s*(\"([^\"]+)\"|'([^']+)')\\s*\\)",u=/\(([^\)]*)\)/,s=/^\s+|\s+$/g,p={};t.amd={};var c={isBundle:!1,anonDefine:null};i.amdDefine=t,i.amdRequire=r}("undefined"!=typeof self?self:global);
-$__System.registerDynamic('2', [], true, function ($__require, exports, module) {
+$__System.register('2', ['3', '4', '5'], function (_export) {
+	// =======================================================================================
+	// DOM
+	'use strict';
+
+	var $, lg, _, $gallery, $content, $contentPanel, $contentPanelInner, $contentShim, $pullUpButton, $inspoDrawer, $inspoContent, $inspoTab, $inspoBoardGroup, $overlay, $colorOption, $sizeOptionContainer, $sizeSelection, $sizeSelect, $sizeOptions, $summary, $summaryShim, $freeGift, $freeGiftDetails, $freeGiftDetailsContents, $swatchOption1, $swatchOption2, $swatchOption3, $galleryImageSwap1a, $galleryImageSwap2a, $galleryImageSwap3a, $galleryImageSwap4a, $galleryImageSwap5a, $galleryImageSwap1b, $galleryImageSwap2b, $galleryImageSwap3b, $galleryImageSwap4b, $galleryImageSwap5b, $modelInfo, $modelInfoDetails, $modelInfoDetailsContents, $modelInfoHeadline, contentFixedPanelHeight, content_fixed, content_original_height, inspo_drawer_fix_point, inspo_drawer_visible, inspo_drawer_active, inspo_top_original, inspo_active_board_num, free_gift_open, model_info_open, activeSwatch, galleryFadeActive, pullingUp, free_gift_seen, window_scroll_track_start, window_scroll_track, window_scroll_diff, product_tag_timer;
+
+	// =======================================================================================
+	// FUNCTIONS
+	// ----------------- FIX CONTENT -----------------
+	//let debounce_reposition_colors = _.debounce(reposition_colors, 200);
+	function fix_content() {
+		// Get distance of gallery from bottom. We're using the gallery to measure toggle point, because content height may shift. We cannot use a fixed/determined point. We have to constantly calculate at every scroll.
+		var galleryDistFromBottom = $gallery[0].getBoundingClientRect().bottom - window.innerHeight;
+		// Toggle fixed class on content
+		if (galleryDistFromBottom <= -contentFixedPanelHeight - 10) {
+			// Unfix it
+			if (content_fixed === 0) {
+				$content.removeClass('fixed');
+				$contentShim.hide();
+				// Reset position colors when not in fixed bar
+				$summaryShim.css({ 'top': 0 });
+				content_fixed = 1;
+				//debounce_reposition_colors.cancel();
+			}
+		} else {
+				// Fix it
+				if (content_fixed === 1) {
+					$content.addClass('fixed');
+					$contentShim.show();
+					content_fixed = 0;
+				}
+				// Get height of summary to measure how much need to shift top position of colors to show in the fixed bar
+				//reposition_colors();
+				//debounce_reposition_colors();
+			}
+	}
+	/* 
+ function reposition_colors() {
+ 	let topOffset = $summary.outerHeight() + 4;
+ 	//lg(`topOffset: ${topOffset}`);
+ 	$summaryShim.css({'top': -topOffset});
+ }
+  */
+	// ----------------- SCROLL TO CONTENT -----------------
+	function scroll_to_content(speed) {
+		var scroll_target = $contentShim.offset().top - window.innerHeight * .2;
+		$('html, body').animate({
+			scrollTop: scroll_target
+		}, {
+			duration: speed,
+			queue: false
+		});
+	}
+	// ----------------- FIX INSPO DRAWER -----------------
+	function fix_inspo_drawer() {
+		var gallery_offset_top = $gallery.offset().top - 50;
+		var window_scroll_pos = $(window).scrollTop();
+		var diff = gallery_offset_top - window_scroll_pos;
+		var galleryDistFromBottom = $gallery[0].getBoundingClientRect().bottom - window.innerHeight;
+		if (diff <= 0 && galleryDistFromBottom > -500) {
+			// Show the mini inspo drawer
+			if (inspo_drawer_visible === 0) {
+				var x = $inspoDrawer.offset().top - gallery_offset_top;
+				$inspoDrawer.removeClass('hidden');
+				$inspoDrawer.removeClass('extra-collapsed');
+				inspo_drawer_visible = 1;
+			}
+		} else if (galleryDistFromBottom >= -490) {
+			// Hide the mini inspo drawer when scrolled above fix point
+			if (inspo_drawer_visible === 1) {
+				$inspoDrawer.addClass('hidden');
+				inspo_drawer_visible = 0;
+			}
+		} else {
+			// Hide the mini inspo drawer when scrolled below fix point
+			if (inspo_drawer_visible === 1) {
+				$inspoDrawer.addClass('extra-collapsed');
+				inspo_drawer_visible = 0;
+			}
+		}
+	}
+	// ----------------- OPEN INSPO DRAWER -----------------
+	function open_inspo_drawer() {
+		if (inspo_drawer_active === 0) {
+			$inspoDrawer.removeClass('collapsed');
+			$inspoDrawer.addClass('active');
+			$overlay.addClass('active');
+			$overlay.scrollTop(10000); // Using overlay with invisible scrolling with a long empty div within. Setting scroll position here so neither scrolling up or down will be anywhere close to scroll limit.
+			//$('body').css({'height': window.innerHeight, 'overflow': 'hidden'});
+			inspo_drawer_active = 1;
+		}
+	}
+	// ----------------- CLOSE INSPO DRAWER -----------------
+	function close_inspo_drawer() {
+		if (inspo_drawer_active === 1) {
+			$inspoDrawer.addClass('collapsed');
+			$inspoDrawer.removeClass('active');
+			$overlay.removeClass('active');
+			// Reset Inspo Drawer State
+			$inspoBoardGroup.css({ 'left': 0 });
+			$inspoTab.removeClass('active');
+			$inspoDrawer.find('.tab:first-child').addClass('active');
+			inspo_active_board_num = 1;
+			$inspoContent.scrollTop(0);
+			//$('body').css({'height': 'auto', 'overflow': 'visible'});
+			inspo_drawer_active = 0;
+		}
+	}
+	// ----------------- SWITCH INSPO BOARD -----------------
+	function switch_inspo_board(num) {
+		inspo_active_board_num = num;
+		$inspoBoardGroup.css({ 'left': '-' + 100 * (num - 1) + '%' });
+		$inspoContent.animate({
+			scrollTop: 0
+		}, {
+			duration: 150,
+			queue: false
+		});
+	}
+	// ----------------- OPEN FREE GIFT -----------------
+	function open_free_gift() {
+		$freeGift.addClass('expanded');
+		$freeGiftDetails.css({ 'height': $freeGiftDetailsContents.outerHeight() });
+	}
+	// ----------------- CLOSE FREE GIFT -----------------
+	function close_free_gift() {
+		$freeGift.removeClass('expanded');
+		$freeGiftDetails.css({ 'height': 0 });
+	}
+	// ----------------- OPEN MODEL INFO -----------------
+	function open_model_info() {
+		$modelInfo.addClass('expanded');
+		$modelInfoDetails.css({ 'height': $modelInfoDetailsContents.outerHeight() });
+	}
+	// ----------------- CLOSE MODEL INFO -----------------
+	function close_model_info() {
+		$modelInfo.removeClass('expanded');
+		$modelInfoDetails.css({ 'height': 0 });
+	}
+	// ----------------- CHANGE COLOR INIT -----------------
+	function change_color_init(num) {
+		if (num === 1 && activeSwatch !== 1) {
+			change_color('navy');
+			activeSwatch = 1;
+			$modelInfoHeadline.html('Meghan is 5\' 10" wearing size 9');
+			$gallery.attr('data-color', 'navy');
+			$('.product-option.color').find('.heading').find('.selection').html('Navy');
+			prototype_tag_animate();
+		} else if (num === 2 && activeSwatch !== 2) {
+			change_color('champagne');
+			activeSwatch = 2;
+			$modelInfoHeadline.html('Holly is 5\' 7" wearing size 8');
+			$gallery.attr('data-color', 'champagne');
+			$('.product-option.color').find('.heading').find('.selection').html('Champagne');
+			prototype_tag_animate();
+		} else if (num === 3 && activeSwatch !== 3) {
+			change_color('purple');
+			activeSwatch = 3;
+			$modelInfoHeadline.html('Katarina is 6\' 1" wearing size 9');
+			$gallery.attr('data-color', 'purple');
+			$('.product-option.color').find('.heading').find('.selection').html('Purple');
+			prototype_tag_animate();
+		}
+	}
+	// ----------------- CHANGE COLOR -----------------
+	function change_color(color) {
+		if (galleryFadeActive === 1) {
+			$galleryImageSwap1b.attr('src', 'img/p8948728/' + color + '-1.jpg');
+			$galleryImageSwap2b.attr('src', 'img/p8948728/' + color + '-2.jpg');
+			$galleryImageSwap3b.attr('src', 'img/p8948728/' + color + '-3.jpg');
+			$galleryImageSwap4b.attr('src', 'img/p8948728/' + color + '-4.jpg');
+			$galleryImageSwap5b.attr('src', 'img/p8948728/' + color + '-5.jpg');
+			$gallery.addClass('fade2');
+			$gallery.removeClass('fade1');
+			galleryFadeActive = 2;
+		} else {
+			$galleryImageSwap1a.attr('src', 'img/p8948728/' + color + '-1.jpg');
+			$galleryImageSwap2a.attr('src', 'img/p8948728/' + color + '-2.jpg');
+			$galleryImageSwap3a.attr('src', 'img/p8948728/' + color + '-3.jpg');
+			$galleryImageSwap4a.attr('src', 'img/p8948728/' + color + '-4.jpg');
+			$galleryImageSwap5a.attr('src', 'img/p8948728/' + color + '-5.jpg');
+			$gallery.addClass('fade1');
+			$gallery.removeClass('fade2');
+			galleryFadeActive = 1;
+		}
+	}
+	// ----------------- ANIMATE PRODUCT TAG -----------------
+	function product_tag_animate($this) {
+		$this.removeClass('anim-step-1');
+		clearTimeout(product_tag_timer);
+		var product_tag_timer = setTimeout(function () {
+			$this.addClass('anim-step-1');
+		}, 500);
+	}
+	// ----------------- ANIMATE TAG 1 and TAG 2 -----------------
+	function prototype_tag_animate() {
+		product_tag_animate($('.tag1'));
+		product_tag_animate($('.tag2'));
+	}
+	// ----------------- TOGGLE SIZE OPTIONS -----------------
+	function toggleSizeOptions() {
+		if ($sizeOptionContainer.hasClass('expanded')) {
+			// COLLAPSE OPTIONS
+			$sizeSelect.css({ 'height': 0 });
+			$sizeOptionContainer.removeClass('expanded');
+		} else {
+			// EXPAND OPTIONS
+			var targetHeight = $sizeOptions.outerHeight();
+			$sizeSelect.css({ 'height': targetHeight });
+			$sizeOptionContainer.addClass('expanded');
+		}
+	}
+	// =======================================================================================
+	// EVENTS
+	return {
+		setters: [function (_2) {
+			$ = _2['default'];
+		}, function (_4) {
+			lg = _4.lg;
+		}, function (_3) {
+			_ = _3['default'];
+		}],
+		execute: function () {
+			$gallery = $('.gallery');
+			$content = $('.content');
+			$contentPanel = $content.find('.panel');
+			$contentPanelInner = $contentPanel.find('.inner');
+			$contentShim = $('.content-shim');
+			$pullUpButton = $('.pull-up-button');
+			$inspoDrawer = $('.inspo-drawer');
+			$inspoContent = $('.inspo-content');
+			$inspoTab = $inspoDrawer.find('.tab');
+			$inspoBoardGroup = $inspoDrawer.find('.product-groups');
+			$overlay = $('.overlay');
+			$colorOption = $('.product-option.color').find('.option');
+			$sizeOptionContainer = $('.product-option.size');
+			$sizeSelection = $('.product-option.size').find('.selection');
+			$sizeSelect = $('.product-option.size').find('.select');
+			$sizeOptions = $('.product-option.size').find('.options');
+			$summary = $('.content').find('.summary');
+			$summaryShim = $('.content').find('.summary-shim');
+			$freeGift = $('.free-gift');
+			$freeGiftDetails = $freeGift.find('.details');
+			$freeGiftDetailsContents = $freeGiftDetails.find('.contents');
+			$swatchOption1 = $('.product-option.color').find('.option-1');
+			$swatchOption2 = $('.product-option.color').find('.option-2');
+			$swatchOption3 = $('.product-option.color').find('.option-3');
+			$galleryImageSwap1a = $('.gallery').find('.swap-1').find('.fade1').find('img');
+			$galleryImageSwap2a = $('.gallery').find('.swap-2').find('.fade1').find('img');
+			$galleryImageSwap3a = $('.gallery').find('.swap-3').find('.fade1').find('img');
+			$galleryImageSwap4a = $('.gallery').find('.swap-4').find('.fade1').find('img');
+			$galleryImageSwap5a = $('.gallery').find('.swap-5').find('.fade1').find('img');
+			$galleryImageSwap1b = $('.gallery').find('.swap-1').find('.fade2').find('img');
+			$galleryImageSwap2b = $('.gallery').find('.swap-2').find('.fade2').find('img');
+			$galleryImageSwap3b = $('.gallery').find('.swap-3').find('.fade2').find('img');
+			$galleryImageSwap4b = $('.gallery').find('.swap-4').find('.fade2').find('img');
+			$galleryImageSwap5b = $('.gallery').find('.swap-5').find('.fade2').find('img');
+			$modelInfo = $('.model-info');
+			$modelInfoDetails = $modelInfo.find('.details');
+			$modelInfoDetailsContents = $modelInfoDetails.find('.contents');
+			$modelInfoHeadline = $modelInfo.find('.headline').find('.hide-expanded');
+
+			// =======================================================================================
+			// VARS
+			contentFixedPanelHeight = $content.outerHeight();
+			content_fixed = 0;
+			content_original_height = $content.outerHeight();
+			inspo_drawer_fix_point = 20;
+			inspo_drawer_visible = 0;
+			inspo_drawer_active = 0;
+			inspo_top_original = $inspoDrawer.css('top');
+			inspo_active_board_num = 1;
+			free_gift_open = 0;
+			model_info_open = 0;
+			activeSwatch = 1;
+			galleryFadeActive = 1;
+			pullingUp = 0;
+			free_gift_seen = 0;
+			window_scroll_track_start = 0;
+			window_scroll_track = 0;
+			window_scroll_diff = 0;
+			product_tag_timer = undefined;
+			$inspoDrawer.on('click', function (e) {
+				open_inspo_drawer();
+			});
+			$overlay.on('click', function () {
+				close_inspo_drawer();
+			});
+			//$inspoClose
+			//	.on('click', function(){
+			//		close_inspo_drawer();
+			//	});
+			$inspoTab.on('click', function () {
+				var num = $(this).index() + 1;
+				if (num !== inspo_active_board_num) {
+					switch_inspo_board(num);
+					$inspoTab.removeClass('active');
+					$(this).addClass('active');
+				}
+			});
+			$contentPanel.on('touchstart', function (e) {
+				window_scroll_diff = 0;
+				if (content_fixed === 0) {
+					window_scroll_track_start = $(window).scrollTop();
+					pullingUp = 1;
+				}
+			}).on('touchmove', function (e) {
+				if (content_fixed === 0) {
+					window_scroll_track = $(window).scrollTop();
+					window_scroll_diff = window_scroll_track - window_scroll_track_start;
+					if (window_scroll_diff > 50) {
+						$content.addClass('pulled-up');
+					} else {
+						$content.removeClass('pulled-up');
+					}
+				}
+			}).on('touchend', function (e) {
+				if (content_fixed === 0) {
+					if (window_scroll_diff > 100) {
+						scroll_to_content(450);
+					}
+					$content.removeClass('pulled-up');
+					pullingUp = 0;
+				}
+			});
+			$colorOption.on('click', function () {
+				$colorOption.removeClass('selected');
+				$(this).addClass('selected');
+			});
+			$freeGift.on('click', function () {
+				if (free_gift_open === 0) {
+					open_free_gift();
+					free_gift_open = 1;
+				} else {
+					close_free_gift();
+					free_gift_open = 0;
+				}
+			});
+			$modelInfo.on('click', function () {
+				if (model_info_open === 0) {
+					open_model_info();
+					model_info_open = 1;
+				} else {
+					close_model_info();
+					model_info_open = 0;
+				}
+			});
+			$swatchOption1.on('click', function () {
+				change_color_init(1);
+			});
+			$swatchOption2.on('click', function () {
+				change_color_init(2);
+			});
+			$swatchOption3.on('click', function () {
+				change_color_init(3);
+			});
+			$sizeSelection.on('click', function () {
+				toggleSizeOptions();
+			});
+			$(window).on('scroll', function () {
+				fix_content();
+				fix_inspo_drawer();
+				wiggle_free_gift();
+			});
+			// =======================================================================================
+			// INIT
+
+			// Set content shim to equal height of content. This shim is put in place of the fixed content panel. When the content panel becomes "unfixed", we essentially swap the shim with the real content panel.
+			$contentShim.css({ 'height': $contentPanelInner.outerHeight() });
+			//content_fixed = 1;
+			fix_content();
+			prototype_tag_animate();
+
+			// =======================================================================================
+			// CHECK END
+			//lg(`{orange{PDP loaded}}`);
+		}
+	};
+});
+
+//$inspoClose = $inspoDrawer.find('.close-button'),
+$__System.register('6', ['3', '4', '5'], function (_export) {
+	// =======================================================================================
+	// DOM
+	'use strict';
+
+	var $, lg, _, $video;
+
+	return {
+		setters: [function (_2) {
+			$ = _2['default'];
+		}, function (_4) {
+			lg = _4.lg;
+		}, function (_3) {
+			_ = _3['default'];
+		}],
+		execute: function () {
+			$video = $('.video');
+
+			// =======================================================================================
+			// VARS
+			// =======================================================================================
+			// FUNCTIONS
+			// =======================================================================================
+			// EVENTS
+			$video.on('click', function () {
+				var vidID = $(this).data('vid-id');
+				var myVideo = document.getElementById(vidID);
+				myVideo.currentTime = 0;
+				myVideo.play();
+			});
+			// =======================================================================================
+			// INIT
+			// =======================================================================================
+			// CHECK END
+			//lg(`{green{video-mobile loaded}}`);
+		}
+	};
+});
+$__System.registerDynamic('7', [], true, function ($__require, exports, module) {
     var global = this || self,
         GLOBAL = global;
     // shim for using process in browser
@@ -68,22 +488,22 @@ $__System.registerDynamic('2', [], true, function ($__require, exports, module) 
         return 0;
     };
 });
-$__System.registerDynamic("3", ["2"], true, function ($__require, exports, module) {
+$__System.registerDynamic("8", ["7"], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
-  module.exports = $__require("2");
+  module.exports = $__require("7");
 });
-$__System.registerDynamic('4', ['3'], true, function ($__require, exports, module) {
+$__System.registerDynamic('9', ['8'], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
-  module.exports = $__System._nodeRequire ? process : $__require('3');
+  module.exports = $__System._nodeRequire ? process : $__require('8');
 });
-$__System.registerDynamic("5", ["4"], true, function ($__require, exports, module) {
+$__System.registerDynamic("a", ["9"], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
-  module.exports = $__require("4");
+  module.exports = $__require("9");
 });
-$__System.registerDynamic('6', ['5'], true, function ($__require, exports, module) {
+$__System.registerDynamic('b', ['a'], true, function ($__require, exports, module) {
   /* */
   "format cjs";
 
@@ -4099,86 +4519,12 @@ $__System.registerDynamic('6', ['5'], true, function ($__require, exports, modul
         root._ = _;
       }
     }).call(this);
-  })($__require('5'));
+  })($__require('a'));
 });
-$__System.registerDynamic("7", ["6"], true, function ($__require, exports, module) {
+$__System.registerDynamic("5", ["b"], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
-  module.exports = $__require("6");
-});
-$__System.registerDynamic('8', [], true, function ($__require, exports, module) {
-  /* */
-  "format cjs";
-  'use strict';
-  var global = this || self,
-      GLOBAL = global;
-  var _extends = Object.assign || function (a) {
-    for (var b, c = 1; c < arguments.length; c++) for (var d in b = arguments[c], b) Object.prototype.hasOwnProperty.call(b, d) && (a[d] = b[d]);return a;
-  },
-      SwipeListener = function (a, b) {
-    if (a) {
-      'undefined' != typeof window && function () {
-        function a(a, b) {
-          b = b || { bubbles: !1, cancelable: !1, detail: void 0 };var c = document.createEvent('CustomEvent');return c.initCustomEvent(a, b.bubbles, b.cancelable, b.detail), c;
-        }return 'function' != typeof window.CustomEvent && void (a.prototype = window.Event.prototype, window.CustomEvent = a);
-      }();b || (b = {}), b = _extends({}, { minHorizontal: 10, minVertical: 10, deltaHorizontal: 3, deltaVertical: 5, preventScroll: !1, lockAxis: !0, touch: !0, mouse: !0 }, b);var c = [],
-          d = !1,
-          e = function () {
-        d = !0;
-      },
-          f = function (a) {
-        d = !1, h(a);
-      },
-          g = function (a) {
-        d && (a.changedTouches = [{ clientX: a.clientX, clientY: a.clientY }], i(a));
-      };b.mouse && (a.addEventListener('mousedown', e), a.addEventListener('mouseup', f), a.addEventListener('mousemove', g));var h = function (d) {
-        var e = Math.abs,
-            f = Math.max,
-            g = Math.min;if (c.length) {
-          for (var h = 'function' == typeof TouchEvent && d instanceof TouchEvent, j = [], k = [], l = { top: !1, right: !1, bottom: !1, left: !1 }, m = 0; m < c.length; m++) j.push(c[m].x), k.push(c[m].y);var i = j[0],
-              n = j[j.length - 1],
-              o = k[0],
-              p = k[k.length - 1],
-              q = { x: [i, n], y: [o, p] };if (1 < c.length) {
-            var r = { detail: _extends({ touch: h }, q) },
-                s = new CustomEvent('swiperelease', r);a.dispatchEvent(s);
-          }var t = j[0] - j[j.length - 1],
-              u = 'none';u = 0 < t ? 'left' : 'right';var v,
-              w = g.apply(Math, j),
-              x = f.apply(Math, j);if (e(t) >= b.minHorizontal && ('left' == u ? (v = e(w - j[j.length - 1]), v <= b.deltaHorizontal && (l.left = !0)) : 'right' == u ? (v = e(x - j[j.length - 1]), v <= b.deltaHorizontal && (l.right = !0)) : void 0), t = k[0] - k[k.length - 1], u = 'none', u = 0 < t ? 'top' : 'bottom', w = g.apply(Math, k), x = f.apply(Math, k), e(t) >= b.minVertical && ('top' == u ? (v = e(w - k[k.length - 1]), v <= b.deltaVertical && (l.top = !0)) : 'bottom' == u ? (v = e(x - k[k.length - 1]), v <= b.deltaVertical && (l.bottom = !0)) : void 0), (c = [], l.top || l.right || l.bottom || l.left)) {
-            b.lockAxis && ((l.left || l.right) && e(i - n) > e(o - p) ? l.top = l.bottom = !1 : (l.top || l.bottom) && e(i - n) < e(o - p) && (l.left = l.right = !1));var y = { detail: _extends({ directions: l, touch: h }, q) },
-                z = new CustomEvent('swipe', y);a.dispatchEvent(z);
-          } else {
-            var A = new CustomEvent('swipecancel', { detail: _extends({ touch: h }, q) });a.dispatchEvent(A);
-          }
-        }
-      },
-          i = function (d) {
-        b.preventScroll && d.preventDefault();var e = d.changedTouches[0];if (c.push({ x: e.clientX, y: e.clientY }), 1 < c.length) {
-          var f = c[0].x,
-              g = c[c.length - 1].x,
-              h = c[0].y,
-              i = c[c.length - 1].y,
-              j = { detail: { x: [f, g], y: [h, i], touch: 'function' == typeof TouchEvent && d instanceof TouchEvent } },
-              k = new CustomEvent('swiping', j);a.dispatchEvent(k);
-        }
-      },
-          j = !1;try {
-        var k = Object.defineProperty({}, 'passive', { get: function () {
-            j = { passive: !b.preventScroll };
-          } });window.addEventListener('testPassive', null, k), window.removeEventListener('testPassive', null, k);
-      } catch (a) {}return b.touch && (a.addEventListener('touchmove', i, j), a.addEventListener('touchend', h)), { off: function () {
-          a.removeEventListener('touchmove', i, j), a.removeEventListener('touchend', h), a.removeEventListener('mousedown', e), a.removeEventListener('mouseup', f), a.removeEventListener('mousemove', g);
-        } };
-    }
-  };'undefined' != typeof module && 'undefined' != typeof module.exports ? (module.exports = SwipeListener, module.exports.default = SwipeListener) : 'function' == typeof undefined && define.amd ? define([], function () {
-    return SwipeListener;
-  }) : window.SwipeListener = SwipeListener;
-});
-$__System.registerDynamic("9", ["8"], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  module.exports = $__require("8");
+  module.exports = $__require("b");
 });
 (function() {
 var define = $__System.amdDefine;
@@ -10183,9 +10529,9 @@ var define = $__System.amdDefine;
   });
   jQuery.fn.andSelf = jQuery.fn.addBack;
   if (typeof define === "function" && define.amd) {
-    define("a", [], function() {
+    define("c", [], function() {
       return jQuery;
-    }) && define("jquery", ["a"], function(m) {
+    }) && define("jquery", ["c"], function(m) {
       return m;
     });
   }
@@ -10209,12 +10555,12 @@ var define = $__System.amdDefine;
 })();
 (function() {
 var define = $__System.amdDefine;
-define("b", ["a"], function(main) {
+define("3", ["c"], function(main) {
   return main;
 });
 
 })();
-$__System.register('c', ['b'], function (_export) {
+$__System.register('4', ['3'], function (_export) {
 	// ====================================
 	// Quick and Dirty Debugging
 	//
@@ -10251,8 +10597,8 @@ $__System.register('c', ['b'], function (_export) {
 		}
 		lg(out);
 	}return {
-		setters: [function (_b) {
-			$ = _b['default'];
+		setters: [function (_) {
+			$ = _['default'];
 		}],
 		execute: function () {
 			html_snippet = '<div id=lg style="\n\tbackground:rgba(0,0,0,.78);\n\tposition:fixed;\n\tbottom:0;\n\tright:0;\n\tcolor:#ccc;\n\tpadding:5px;\n\tfont-family:Inconsolata, arial;\n\tfont-size:.7em;\n\tz-index:9999;\n\t-webkit-font-smoothing:subpixel-antialiased;\n\tdisplay:none;\n\tline-height:1.1em;\n\tborder-top-left-radius: 5px;\n\t"></div>';
@@ -10271,339 +10617,66 @@ $__System.register('c', ['b'], function (_export) {
 		}
 	};
 });
-$__System.register('d', ['7', '9', 'b', 'c'], function (_export) {
+$__System.register('d', ['3', '4', '5'], function (_export) {
 	// =======================================================================================
 	// DOM
 	'use strict';
 
-	var _, SwipeListener, $, lg, $gallery, $content, $contentPanel, $contentPanelInner, $contentShim, $pullUpButton, $inspoDrawer, $inspoContent, $inspoClose, $inspoTab, $inspoBoardGroup, $overlay, $colorOption, $summary, $summaryShim, $freeGift, $freeGiftDetails, $freeGiftDetailsContents, $swatchOption1, $swatchOption2, $swatchOption3, $galleryImageSwap1a, $galleryImageSwap2a, $galleryImageSwap3a, $galleryImageSwap4a, $galleryImageSwap5a, $galleryImageSwap1b, $galleryImageSwap2b, $galleryImageSwap3b, $galleryImageSwap4b, $galleryImageSwap5b, contentFixedPanelHeight, content_fixed, inspo_drawer_fix_point, inspo_drawer_visible, inspo_drawer_active, inspo_top_original, inspo_active_board_num, free_gift_open, activeSwatch, galleryFadeActive, debounce_reposition_colors, container, listener;
+	var $, lg, _, $accordion, $accordionTrigger;
 
-	function fix_content() {
-		// Get distance of gallery from bottom. We're using the gallery to measure toggle point, because content height may shift. We cannot use a fixed/determined point. We have to constantly calculate at every scroll.
-		var galleryDistFromBottom = $gallery[0].getBoundingClientRect().bottom - window.innerHeight;
-		// Toggle fixed class on content
-		if (galleryDistFromBottom <= -contentFixedPanelHeight) {
-			// Unfix it
-			if (content_fixed === 0) {
-				$content.removeClass('fixed');
-				$contentShim.hide();
-				// Reset position colors when not in fixed bar
-				$summaryShim.css({ 'top': 0 });
-				content_fixed = 1;
-				debounce_reposition_colors.cancel();
-			}
+	// =======================================================================================
+	// VARS
+	// =======================================================================================
+	// FUNCTIONS
+	// ----------------- TOGGLE ACCORDION -----------------
+	function toggle_accordion($this) {
+		var $parent_accordion = $this.parent();
+		var $details = $this.parent().find('.accordion-details');
+		var $contents = $this.parent().find('.accordion-details .accordion-contents');
+		var is_expanded = $parent_accordion.hasClass('expanded');
+		if (!is_expanded) {
+			//OPEN
+			var target_height = $contents.outerHeight();
+			$details.css({ 'height': target_height });
+			$parent_accordion.addClass('expanded');
 		} else {
-			// Fix it
-			if (content_fixed === 1) {
-				$content.addClass('fixed');
-				$contentShim.show();
-				content_fixed = 0;
-			}
-			// Get height of summary to measure how much need to shift top position of colors to show in the fixed bar
-			reposition_colors();
-			debounce_reposition_colors();
-		}
-	}
-	function reposition_colors() {
-		var topOffset = $summary.outerHeight() + 4;
-		//lg(`topOffset: ${topOffset}`);
-		$summaryShim.css({ 'top': -topOffset });
-	}
-	// ----------------- SCROLL TO CONTENT -----------------
-	function scroll_to_content(speed) {
-		var scroll_target = $contentShim.offset().top - window.innerHeight * .2;
-		$('html, body').animate({
-			scrollTop: scroll_target
-		}, {
-			duration: speed,
-			queue: false
-		});
-	}
-	// ----------------- FIX INSPO DRAWER -----------------
-	function fix_inspo_drawer() {
-		var gallery_offset_top = $gallery.offset().top;
-		var window_scroll_pos = $(window).scrollTop();
-		var diff = gallery_offset_top - window_scroll_pos;
-		var galleryDistFromBottom = $gallery[0].getBoundingClientRect().bottom - window.innerHeight;
-		if (diff <= 0 && galleryDistFromBottom > -500) {
-			// Show the mini inspo drawer
-			if (inspo_drawer_visible === 0) {
-				var x = $inspoDrawer.offset().top - gallery_offset_top;
-				$inspoDrawer.removeClass('hidden');
-				inspo_drawer_visible = 1;
-			}
-		} else if (galleryDistFromBottom >= -500) {
-			// Hide the mini inspo drawer when scrolled above fix point
-			if (inspo_drawer_visible === 1) {
-				$inspoDrawer.addClass('hidden');
-				inspo_drawer_visible = 0;
-			}
-		} else {
-			// Hide the mini inspo drawer when scrolled below fix point
-			if (inspo_drawer_visible === 1) {
-				$inspoDrawer.addClass('hidden');
-				inspo_drawer_visible = 0;
-			}
-		}
-	}
-	// ----------------- OPEN INSPO DRAWER -----------------
-	function open_inspo_drawer() {
-		if (inspo_drawer_active === 0) {
-			$inspoDrawer.removeClass('collapsed');
-			$inspoDrawer.addClass('active');
-			$overlay.addClass('active');
-			$overlay.scrollTop(10000); // Using overlay with invisible scrolling with a long empty div within. Setting scroll position here so neither scrolling up or down will be anywhere close to scroll limit.
-			//$('body').css({'height': window.innerHeight, 'overflow': 'hidden'});
-			inspo_drawer_active = 1;
-		}
-	}
-	// ----------------- CLOSE INSPO DRAWER -----------------
-	function close_inspo_drawer() {
-		if (inspo_drawer_active === 1) {
-			$inspoDrawer.addClass('collapsed');
-			$inspoDrawer.removeClass('active');
-			$overlay.removeClass('active');
-			// Reset Inspo Drawer State
-			$inspoBoardGroup.css({ 'left': 0 });
-			$inspoTab.removeClass('active');
-			$inspoDrawer.find('.tab:first-child').addClass('active');
-			inspo_active_board_num = 1;
-			$inspoContent.scrollTop(0);
-			//$('body').css({'height': 'auto', 'overflow': 'visible'});
-			inspo_drawer_active = 0;
-		}
-	}
-	// ----------------- SWITCH INSPO BOARD -----------------
-	function switch_inspo_board(num) {
-		//lg(`switch to board ${num}`);
-		inspo_active_board_num = num;
-		$inspoBoardGroup.css({ 'left': '-' + 100 * (num - 1) + '%' });
-		$inspoContent.animate({
-			scrollTop: 0
-		}, {
-			duration: 150,
-			queue: false
-		});
-		//$inspoContent.scrollTop(0);
-	}
-	// ----------------- OPEN FREE GIFT -----------------
-	function open_free_gift() {
-		$freeGift.addClass('expanded');
-		$freeGiftDetails.css({ 'height': $freeGiftDetailsContents.outerHeight() });
-	}
-	// ----------------- CLOSE FREE GIFT -----------------
-	function close_free_gift() {
-		$freeGift.removeClass('expanded');
-		$freeGiftDetails.css({ 'height': 0 });
-	}
-	// ----------------- CHANGE COLOR INIT -----------------
-	function change_color_init(num) {
-		if (num === 1 && activeSwatch !== 1) {
-			change_color('navy');
-			activeSwatch = 1;
-		} else if (num === 2 && activeSwatch !== 2) {
-			change_color('champagne');
-			activeSwatch = 2;
-		} else if (num === 3 && activeSwatch !== 3) {
-			change_color('purple');
-			activeSwatch = 3;
-		}
-	}
-	// ----------------- CHANGE COLOR -----------------
-	function change_color(color) {
-		if (galleryFadeActive === 1) {
-			$galleryImageSwap1b.attr('src', 'img/p8948728/' + color + '-1.jpg');
-			$galleryImageSwap2b.attr('src', 'img/p8948728/' + color + '-2.jpg');
-			$galleryImageSwap3b.attr('src', 'img/p8948728/' + color + '-3.jpg');
-			$galleryImageSwap4b.attr('src', 'img/p8948728/' + color + '-4.jpg');
-			$galleryImageSwap5b.attr('src', 'img/p8948728/' + color + '-5.jpg');
-			$gallery.addClass('fade2');
-			$gallery.removeClass('fade1');
-			galleryFadeActive = 2;
-		} else {
-			$galleryImageSwap1a.attr('src', 'img/p8948728/' + color + '-1.jpg');
-			$galleryImageSwap2a.attr('src', 'img/p8948728/' + color + '-2.jpg');
-			$galleryImageSwap3a.attr('src', 'img/p8948728/' + color + '-3.jpg');
-			$galleryImageSwap4a.attr('src', 'img/p8948728/' + color + '-4.jpg');
-			$galleryImageSwap5a.attr('src', 'img/p8948728/' + color + '-5.jpg');
-			$gallery.addClass('fade1');
-			$gallery.removeClass('fade2');
-			galleryFadeActive = 1;
+			//CLOSE
+			$parent_accordion.removeClass('expanded');
+			$details.css({ 'height': 0 });
 		}
 	}
 	// =======================================================================================
 	// EVENTS
-	/*$pullUpButton
- 	.on('click', function(){
- 		scroll_to_content(600);
- 	});*/
 	return {
 		setters: [function (_2) {
-			_ = _2['default'];
+			$ = _2['default'];
+		}, function (_4) {
+			lg = _4.lg;
 		}, function (_3) {
-			SwipeListener = _3['default'];
-		}, function (_b) {
-			$ = _b['default'];
-		}, function (_c) {
-			lg = _c.lg;
+			_ = _3['default'];
 		}],
 		execute: function () {
-			$gallery = $('.gallery');
-			$content = $('.content');
-			$contentPanel = $content.find('.panel');
-			$contentPanelInner = $contentPanel.find('.inner');
-			$contentShim = $('.content-shim');
-			$pullUpButton = $('.pull-up-button');
-			$inspoDrawer = $('.inspo-drawer');
-			$inspoContent = $('.inspo-content');
-			$inspoClose = $inspoDrawer.find('.close-button');
-			$inspoTab = $inspoDrawer.find('.tab');
-			$inspoBoardGroup = $inspoDrawer.find('.product-groups');
-			$overlay = $('.overlay');
-			$colorOption = $('.product-option.color').find('.option');
-			$summary = $('.content').find('.summary');
-			$summaryShim = $('.content').find('.summary-shim');
-			$freeGift = $('.free-gift');
-			$freeGiftDetails = $freeGift.find('.details');
-			$freeGiftDetailsContents = $freeGiftDetails.find('.contents');
-			$swatchOption1 = $('.product-option.color').find('.option-1');
-			$swatchOption2 = $('.product-option.color').find('.option-2');
-			$swatchOption3 = $('.product-option.color').find('.option-3');
-			$galleryImageSwap1a = $('.gallery').find('.swap-1').find('.fade1').find('img');
-			$galleryImageSwap2a = $('.gallery').find('.swap-2').find('.fade1').find('img');
-			$galleryImageSwap3a = $('.gallery').find('.swap-3').find('.fade1').find('img');
-			$galleryImageSwap4a = $('.gallery').find('.swap-4').find('.fade1').find('img');
-			$galleryImageSwap5a = $('.gallery').find('.swap-5').find('.fade1').find('img');
-			$galleryImageSwap1b = $('.gallery').find('.swap-1').find('.fade2').find('img');
-			$galleryImageSwap2b = $('.gallery').find('.swap-2').find('.fade2').find('img');
-			$galleryImageSwap3b = $('.gallery').find('.swap-3').find('.fade2').find('img');
-			$galleryImageSwap4b = $('.gallery').find('.swap-4').find('.fade2').find('img');
-			$galleryImageSwap5b = $('.gallery').find('.swap-5').find('.fade2').find('img');
-
-			// =======================================================================================
-			// VARS
-			contentFixedPanelHeight = $content.outerHeight();
-			content_fixed = 0;
-			inspo_drawer_fix_point = 20;
-			inspo_drawer_visible = 0;
-			inspo_drawer_active = 0;
-			inspo_top_original = $inspoDrawer.css('top');
-			inspo_active_board_num = 1;
-			free_gift_open = 0;
-			activeSwatch = 1;
-			galleryFadeActive = 1;
-
-			// =======================================================================================
-			// FUNCTIONS
-			// ----------------- FIX CONTENT -----------------
-			debounce_reposition_colors = _.debounce(reposition_colors, 100);
-			$inspoDrawer.on('click', function (e) {
-				open_inspo_drawer();
-			});
-			$overlay.on('click', function () {
-				close_inspo_drawer();
-			});
-			$inspoClose.on('click', function () {
-				close_inspo_drawer();
-			});
-			$inspoTab.on('click', function () {
-				var num = $(this).index() + 1;
-				if (num !== inspo_active_board_num) {
-					switch_inspo_board(num);
-					$inspoTab.removeClass('active');
-					$(this).addClass('active');
-				}
-			});
-			$(window).on('scroll', function () {
-				fix_content();
-				fix_inspo_drawer();
-			});
-			// SWIPE DETECT ON SUMMARY CONTENT PANEL
-			// https://www.npmjs.com/package/swipe-listener
-			//let container = document.querySelector('#pull-up-button');
-			container = document.querySelector('#summary-panel');
-			listener = SwipeListener(container);
-
-			container.addEventListener('swipe', function (e) {
-				if ($content.hasClass('fixed')) {
-					var directions = e.detail.directions;
-					if (directions.top) {
-						scroll_to_content(450);
-					}
-				}
-			});
-
-			/* 
-   let cursor_track_y_start = 0;
-   let cursor_track_y = 0;
-   let cursor_track_y_diff = 0;
-   
-   let window_scroll_track_start = 0;
-   let window_scroll_track = 0;
-   let window_scroll_diff = 0;
-   
-   $contentPanel
-   	.on('touchstart', function(e){
-   		//cursor_track_y_start = e.originalEvent.touches[0].pageY;
-   		window_scroll_track_start = $(window).scrollTop();
-   		//lg(`${cursor_track_y_start}`);
-   	})
-   	.on('touchmove', function(e){
-   		//cursor_track_y = e.originalEvent.touches[0].pageY;
-   		window_scroll_track = $(window).scrollTop();
-   		window_scroll_diff = window_scroll_track - window_scroll_track_start;
-   		//lg(`${window_scroll_diff}`);
-   		if (window_scroll_diff > 5) {
-   			//lg('START EXPANDING THE FIXED PANEL');
-   			$content.css({'height': content_original_height + (window_scroll_diff * 1.5)});
-   		}
-   	})
-   	.on('touchend', function(e){
-   		$content.css({'height': content_original_height});
-   		lg(`${window_scroll_diff}`);
-   		if (window_scroll_diff > 100) {
-   			scroll_to_content(450);
-   		}
-   	});
-    */
-
-			$colorOption.on('click', function () {
-				$colorOption.removeClass('selected');
-				$(this).addClass('selected');
-			});
-			$freeGift.on('click', function () {
-				if (free_gift_open === 0) {
-					open_free_gift();
-					free_gift_open = 1;
-				} else {
-					close_free_gift();
-					free_gift_open = 0;
-				}
-			});
-			$swatchOption1.on('click', function () {
-				change_color_init(1);
-			});
-			$swatchOption2.on('click', function () {
-				change_color_init(2);
-			});
-			$swatchOption3.on('click', function () {
-				change_color_init(3);
+			$accordion = $('.accordion');
+			$accordionTrigger = $accordion.find('.accordion-summary');
+			$accordionTrigger.on('click', function () {
+				toggle_accordion($(this));
 			});
 			// =======================================================================================
 			// INIT
-
-			// Set content shim to equal height of content. This shim is put in place of the fixed content panel. When the content panel becomes "unfixed", we essentially swap the shim with the real content panel.
-			$contentShim.css({ 'height': $contentPanelInner.outerHeight() });
-
+			// If the accordion has the class "expanded" already, then expand this accordion on page load
+			$accordion.map(function (v, k) {
+				if ($(k).hasClass('expanded')) {
+					$(k).removeClass('expanded');
+					toggle_accordion($(k).find('.accordion-summary'));
+				}
+			});
 			// =======================================================================================
 			// CHECK END
-			//lg(`{orange{PDP loaded}}`);
+			//lg(`{green{accordion loaded}}`);
 		}
 	};
 });
-
-//content_original_height = $content.outerHeight(),
-$__System.register('1', ['c', 'd'], function (_export) {
+$__System.register('1', ['2', '4', '6', 'd'], function (_export) {
 
 													// Global
 													//import './forms';
@@ -10612,13 +10685,14 @@ $__System.register('1', ['c', 'd'], function (_export) {
 
 													var lg;
 													return {
-																										setters: [function (_c) {
-																																							lg = _c.lg;
-																										}, function (_d) {}],
+																										setters: [function (_2) {}, function (_) {
+																																							lg = _.lg;
+																										}, function (_3) {}, function (_d) {}],
 																										execute: function () {}
 													};
 });
 
+//import './zoom-box';
 //import './slider';
 
 // Components
