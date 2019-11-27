@@ -8,7 +8,7 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 	// DOM
 	'use strict';
 
-	var $, lg, _, $gallery, $content, $contentPanel, $contentPanelInner, $contentShim, $pullUpButton, $inspoDrawer, $inspoContent, $inspoTab, $inspoBoardGroup, $overlay, $colorOption, $sizeOptionContainer, $sizeSelection, $sizeSelect, $sizeOptions, $summary, $summaryShim, $freeGift, $freeGiftDetails, $freeGiftDetailsContents, $swatchOption1, $swatchOption2, $swatchOption3, $galleryImageSwap1a, $galleryImageSwap2a, $galleryImageSwap3a, $galleryImageSwap4a, $galleryImageSwap5a, $galleryImageSwap1b, $galleryImageSwap2b, $galleryImageSwap3b, $galleryImageSwap4b, $galleryImageSwap5b, $modelInfo, $modelInfoDetails, $modelInfoDetailsContents, $modelInfoHeadline, contentFixedPanelHeight, content_fixed, content_original_height, inspo_drawer_fix_point, inspo_drawer_visible, inspo_drawer_active, inspo_top_original, inspo_active_board_num, free_gift_open, model_info_open, activeSwatch, galleryFadeActive, pullingUp, free_gift_seen, window_scroll_track_start, window_scroll_track, window_scroll_diff, product_tag_timer;
+	var $, lg, _, $gallery, $content, $contentPanel, $contentPanelInner, $contentShim, $pullUpButton, $inspoDrawer, $inspoContent, $inspoTab, $inspoBoardGroup, $overlay, $colorOption, $sizeOptionContainer, $sizeSelection, $sizeSelect, $sizeOptions, $productActions, $productActionsShim, $productPricing, $productPricingShim, $summary, $summaryShim, $freeGift, $freeGiftDetails, $freeGiftDetailsContents, $swatchOption1, $swatchOption2, $swatchOption3, $galleryImageSwap1a, $galleryImageSwap2a, $galleryImageSwap3a, $galleryImageSwap4a, $galleryImageSwap5a, $galleryImageSwap1b, $galleryImageSwap2b, $galleryImageSwap3b, $galleryImageSwap4b, $galleryImageSwap5b, $modelInfo, $modelInfoDetails, $modelInfoDetailsContents, $modelInfoHeadline, contentFixedPanelHeight, content_fixed, content_fixed_top, content_original_height, inspo_drawer_fix_point, inspo_drawer_visible, inspo_drawer_active, inspo_top_original, inspo_active_board_num, free_gift_open, model_info_open, activeSwatch, galleryFadeActive, pullingUp, free_gift_seen, window_scroll_track_start, window_scroll_track, window_scroll_diff, product_tag_timer;
 
 	// =======================================================================================
 	// FUNCTIONS
@@ -47,6 +47,31 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
  	$summaryShim.css({'top': -topOffset});
  }
   */
+	// ----------------- FIX CONTENT TO TOP -----------------
+	function fix_content_top() {
+		var x = $productActions[0].getBoundingClientRect().top;
+		var y = $sizeOptionContainer[0].getBoundingClientRect().bottom;
+		//lg(`y: ${y}`);
+		if (y < -12) {
+			// Fix to top
+			if (content_fixed_top === 0) {
+				$content.addClass('fixed-top');
+				$productActionsShim.show();
+				$productPricingShim.show();
+				content_fixed_top = 1;
+				//lg ('fix to top');
+			}
+		} else {
+				// Unfix from top
+				if (content_fixed_top === 1) {
+					$content.removeClass('fixed-top');
+					$productActionsShim.hide();
+					$productPricingShim.hide();
+					content_fixed_top = 0;
+					//lg ('unfix it');
+				}
+			}
+	}
 	// ----------------- SCROLL TO CONTENT -----------------
 	function scroll_to_content(speed) {
 		var scroll_target = $contentShim.offset().top - window.innerHeight * .2;
@@ -80,7 +105,8 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 		} else {
 			// Hide the mini inspo drawer when scrolled below fix point
 			if (inspo_drawer_visible === 1) {
-				$inspoDrawer.addClass('extra-collapsed');
+				//$inspoDrawer.addClass('extra-collapsed');
+				$inspoDrawer.addClass('hidden');
 				inspo_drawer_visible = 0;
 			}
 		}
@@ -243,6 +269,10 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			$sizeSelection = $('.product-option.size').find('.selection');
 			$sizeSelect = $('.product-option.size').find('.select');
 			$sizeOptions = $('.product-option.size').find('.options');
+			$productActions = $('.product-actions');
+			$productActionsShim = $('.product-actions-shim');
+			$productPricing = $('.product-pricing');
+			$productPricingShim = $('.product-pricing-shim');
 			$summary = $('.content').find('.summary');
 			$summaryShim = $('.content').find('.summary-shim');
 			$freeGift = $('.free-gift');
@@ -270,6 +300,7 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			// VARS
 			contentFixedPanelHeight = $content.outerHeight();
 			content_fixed = 0;
+			content_fixed_top = 0;
 			content_original_height = $content.outerHeight();
 			inspo_drawer_fix_point = 20;
 			inspo_drawer_visible = 0;
@@ -365,6 +396,7 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			});
 			$(window).on('scroll', function () {
 				fix_content();
+				fix_content_top();
 				fix_inspo_drawer();
 				wiggle_free_gift();
 			});
@@ -373,6 +405,8 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 
 			// Set content shim to equal height of content. This shim is put in place of the fixed content panel. When the content panel becomes "unfixed", we essentially swap the shim with the real content panel.
 			$contentShim.css({ 'height': $contentPanelInner.outerHeight() });
+			$productActionsShim.css({ 'height': $productActions.outerHeight() });
+			$productPricingShim.css({ 'height': $productPricing.outerHeight() });
 			//content_fixed = 1;
 			fix_content();
 			prototype_tag_animate();
@@ -385,6 +419,8 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 });
 
 //$inspoClose = $inspoDrawer.find('.close-button'),
+
+//$productPricingActionGroup = $('.pricing-action-group'),
 $__System.register('6', ['3', '4', '5'], function (_export) {
 	// =======================================================================================
 	// DOM
