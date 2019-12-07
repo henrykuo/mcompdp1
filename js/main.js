@@ -8,7 +8,7 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 	// DOM
 	'use strict';
 
-	var $, lg, _, $gallery, $content, $contentPanel, $contentPanelInner, $contentShim, $pullUpButton, $inspoDrawer, $inspoContent, $inspoTab, $inspoBoardGroup, $overlay, $colorOption, $sizeOptionContainer, $sizeSelection, $sizeSelect, $sizeOptions, $productActions, $productActionsShim, $productPricing, $productPricingShim, $summary, $summaryShim, $freeGift, $freeGiftDetails, $freeGiftDetailsContents, $swatchOption1, $swatchOption2, $swatchOption3, $galleryImageSwap1a, $galleryImageSwap2a, $galleryImageSwap3a, $galleryImageSwap4a, $galleryImageSwap5a, $galleryImageSwap1b, $galleryImageSwap2b, $galleryImageSwap3b, $galleryImageSwap4b, $galleryImageSwap5b, $modelInfo, $modelInfoDetails, $modelInfoDetailsContents, $modelInfoHeadline, contentFixedPanelHeight, content_fixed, content_fixed_top, content_original_height, inspo_drawer_fix_point, inspo_drawer_visible, inspo_drawer_active, inspo_top_original, inspo_active_board_num, free_gift_open, model_info_open, activeSwatch, galleryFadeActive, pullingUp, free_gift_seen, window_scroll_track_start, window_scroll_track, window_scroll_diff, product_tag_timer;
+	var $, lg, _, $gallery, $content, $contentPanel, $contentPanelInner, $contentShim, $pullUpButton, $overlay, $colorOption, $sizeOptionContainer, $sizeSelection, $sizeSelect, $sizeOptions, $productActions, $productActionsShim, $productPricing, $productPricingShim, $summary, $summaryShim, $swatchOption1, $swatchOption2, $swatchOption3, $galleryImageSwap1a, $galleryImageSwap2a, $galleryImageSwap3a, $galleryImageSwap4a, $galleryImageSwap5a, $galleryImageSwap1b, $galleryImageSwap2b, $galleryImageSwap3b, $galleryImageSwap4b, $galleryImageSwap5b, $modelInfo, $modelInfoHeadline, contentFixedPanelHeight, content_fixed, content_fixed_top, content_original_height, activeSwatch, galleryFadeActive, pullingUp, window_scroll_track_start, window_scroll_track, window_scroll_diff, product_tag_timer;
 
 	// =======================================================================================
 	// FUNCTIONS
@@ -81,93 +81,6 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			duration: speed,
 			queue: false
 		});
-	}
-	// ----------------- FIX INSPO DRAWER -----------------
-	function fix_inspo_drawer() {
-		var gallery_offset_top = $gallery.offset().top - 50;
-		var window_scroll_pos = $(window).scrollTop();
-		var diff = gallery_offset_top - window_scroll_pos;
-		var galleryDistFromBottom = $gallery[0].getBoundingClientRect().bottom - window.innerHeight;
-		if (diff <= 0 && galleryDistFromBottom > -500) {
-			// Show the mini inspo drawer
-			if (inspo_drawer_visible === 0) {
-				var x = $inspoDrawer.offset().top - gallery_offset_top;
-				$inspoDrawer.removeClass('hidden');
-				$inspoDrawer.removeClass('extra-collapsed');
-				inspo_drawer_visible = 1;
-			}
-		} else if (galleryDistFromBottom >= -490) {
-			// Hide the mini inspo drawer when scrolled above fix point
-			if (inspo_drawer_visible === 1) {
-				$inspoDrawer.addClass('hidden');
-				inspo_drawer_visible = 0;
-			}
-		} else {
-			// Hide the mini inspo drawer when scrolled below fix point
-			if (inspo_drawer_visible === 1) {
-				//$inspoDrawer.addClass('extra-collapsed');
-				$inspoDrawer.addClass('hidden');
-				inspo_drawer_visible = 0;
-			}
-		}
-	}
-	// ----------------- OPEN INSPO DRAWER -----------------
-	function open_inspo_drawer() {
-		if (inspo_drawer_active === 0) {
-			$inspoDrawer.removeClass('collapsed');
-			$inspoDrawer.addClass('active');
-			$overlay.addClass('active');
-			$overlay.scrollTop(10000); // Using overlay with invisible scrolling with a long empty div within. Setting scroll position here so neither scrolling up or down will be anywhere close to scroll limit.
-			//$('body').css({'height': window.innerHeight, 'overflow': 'hidden'});
-			inspo_drawer_active = 1;
-		}
-	}
-	// ----------------- CLOSE INSPO DRAWER -----------------
-	function close_inspo_drawer() {
-		if (inspo_drawer_active === 1) {
-			$inspoDrawer.addClass('collapsed');
-			$inspoDrawer.removeClass('active');
-			$overlay.removeClass('active');
-			// Reset Inspo Drawer State
-			$inspoBoardGroup.css({ 'left': 0 });
-			$inspoTab.removeClass('active');
-			$inspoDrawer.find('.tab:first-child').addClass('active');
-			inspo_active_board_num = 1;
-			$inspoContent.scrollTop(0);
-			//$('body').css({'height': 'auto', 'overflow': 'visible'});
-			inspo_drawer_active = 0;
-		}
-	}
-	// ----------------- SWITCH INSPO BOARD -----------------
-	function switch_inspo_board(num) {
-		inspo_active_board_num = num;
-		$inspoBoardGroup.css({ 'left': '-' + 100 * (num - 1) + '%' });
-		$inspoContent.animate({
-			scrollTop: 0
-		}, {
-			duration: 150,
-			queue: false
-		});
-	}
-	// ----------------- OPEN FREE GIFT -----------------
-	function open_free_gift() {
-		$freeGift.addClass('expanded');
-		$freeGiftDetails.css({ 'height': $freeGiftDetailsContents.outerHeight() });
-	}
-	// ----------------- CLOSE FREE GIFT -----------------
-	function close_free_gift() {
-		$freeGift.removeClass('expanded');
-		$freeGiftDetails.css({ 'height': 0 });
-	}
-	// ----------------- OPEN MODEL INFO -----------------
-	function open_model_info() {
-		$modelInfo.addClass('expanded');
-		$modelInfoDetails.css({ 'height': $modelInfoDetailsContents.outerHeight() });
-	}
-	// ----------------- CLOSE MODEL INFO -----------------
-	function close_model_info() {
-		$modelInfo.removeClass('expanded');
-		$modelInfoDetails.css({ 'height': 0 });
 	}
 	// ----------------- CHANGE COLOR INIT -----------------
 	function change_color_init(num) {
@@ -259,10 +172,6 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			$contentPanelInner = $contentPanel.find('.inner');
 			$contentShim = $('.content-shim');
 			$pullUpButton = $('.pull-up-button');
-			$inspoDrawer = $('.inspo-drawer');
-			$inspoContent = $('.inspo-content');
-			$inspoTab = $inspoDrawer.find('.tab');
-			$inspoBoardGroup = $inspoDrawer.find('.product-groups');
 			$overlay = $('.overlay');
 			$colorOption = $('.product-option.color').find('.option');
 			$sizeOptionContainer = $('.product-option.size');
@@ -275,9 +184,6 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			$productPricingShim = $('.product-pricing-shim');
 			$summary = $('.content').find('.summary');
 			$summaryShim = $('.content').find('.summary-shim');
-			$freeGift = $('.free-gift');
-			$freeGiftDetails = $freeGift.find('.details');
-			$freeGiftDetailsContents = $freeGiftDetails.find('.contents');
 			$swatchOption1 = $('.product-option.color').find('.option-1');
 			$swatchOption2 = $('.product-option.color').find('.option-2');
 			$swatchOption3 = $('.product-option.color').find('.option-3');
@@ -292,8 +198,6 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			$galleryImageSwap4b = $('.gallery').find('.swap-4').find('.fade2').find('img');
 			$galleryImageSwap5b = $('.gallery').find('.swap-5').find('.fade2').find('img');
 			$modelInfo = $('.model-info');
-			$modelInfoDetails = $modelInfo.find('.details');
-			$modelInfoDetailsContents = $modelInfoDetails.find('.contents');
 			$modelInfoHeadline = $modelInfo.find('.headline').find('.hide-expanded');
 
 			// =======================================================================================
@@ -302,39 +206,13 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			content_fixed = 0;
 			content_fixed_top = 0;
 			content_original_height = $content.outerHeight();
-			inspo_drawer_fix_point = 20;
-			inspo_drawer_visible = 0;
-			inspo_drawer_active = 0;
-			inspo_top_original = $inspoDrawer.css('top');
-			inspo_active_board_num = 1;
-			free_gift_open = 0;
-			model_info_open = 0;
 			activeSwatch = 1;
 			galleryFadeActive = 1;
 			pullingUp = 0;
-			free_gift_seen = 0;
 			window_scroll_track_start = 0;
 			window_scroll_track = 0;
 			window_scroll_diff = 0;
 			product_tag_timer = undefined;
-			$inspoDrawer.on('click', function (e) {
-				open_inspo_drawer();
-			});
-			$overlay.on('click', function () {
-				close_inspo_drawer();
-			});
-			//$inspoClose
-			//	.on('click', function(){
-			//		close_inspo_drawer();
-			//	});
-			$inspoTab.on('click', function () {
-				var num = $(this).index() + 1;
-				if (num !== inspo_active_board_num) {
-					switch_inspo_board(num);
-					$inspoTab.removeClass('active');
-					$(this).addClass('active');
-				}
-			});
 			$contentPanel.on('touchstart', function (e) {
 				window_scroll_diff = 0;
 				if (content_fixed === 0) {
@@ -364,24 +242,6 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 				$colorOption.removeClass('selected');
 				$(this).addClass('selected');
 			});
-			$freeGift.on('click', function () {
-				if (free_gift_open === 0) {
-					open_free_gift();
-					free_gift_open = 1;
-				} else {
-					close_free_gift();
-					free_gift_open = 0;
-				}
-			});
-			$modelInfo.on('click', function () {
-				if (model_info_open === 0) {
-					open_model_info();
-					model_info_open = 1;
-				} else {
-					close_model_info();
-					model_info_open = 0;
-				}
-			});
 			$swatchOption1.on('click', function () {
 				change_color_init(1);
 			});
@@ -394,12 +254,8 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 			$sizeSelection.on('click', function () {
 				toggleSizeOptions();
 			});
-			$(window).on('scroll', function () {
-				fix_content();
-				fix_content_top();
-				fix_inspo_drawer();
-				wiggle_free_gift();
-			});
+			window.addEventListener('scroll', fix_content);
+			window.addEventListener('scroll', fix_content_top);
 			// =======================================================================================
 			// INIT
 
@@ -413,15 +269,398 @@ $__System.register('2', ['3', '4', '5'], function (_export) {
 
 			// =======================================================================================
 			// CHECK END
-			//lg(`{orange{PDP loaded}}`);
+			//lg(`{green{PDP loaded}}`);
+		}
+	};
+});
+
+//$productPricingActionGroup = $('.pricing-action-group'),
+$__System.register('6', ['3', '4', '5'], function (_export) {
+	// =======================================================================================
+	// DOM
+	'use strict';
+
+	var $, lg, _, $gallery, $inspoDrawer, $inspoContent, $inspoTab, $inspoBoardGroup, $overlay, inspo_drawer_fix_point, inspo_drawer_visible, inspo_drawer_active, inspo_top_original, inspo_active_board_num;
+
+	// =======================================================================================
+	// FUNCTIONS
+	// ----------------- FIX INSPO DRAWER -----------------
+	function fix_inspo_drawer() {
+		var gallery_offset_top = $gallery.offset().top - 50;
+		var window_scroll_pos = $(window).scrollTop();
+		var diff = gallery_offset_top - window_scroll_pos;
+		var galleryDistFromBottom = $gallery[0].getBoundingClientRect().bottom - window.innerHeight;
+		if (diff <= 0 && galleryDistFromBottom > -500) {
+			// Show the mini inspo drawer
+			if (inspo_drawer_visible === 0) {
+				var x = $inspoDrawer.offset().top - gallery_offset_top;
+				$inspoDrawer.removeClass('hidden');
+				$inspoDrawer.removeClass('extra-collapsed');
+				inspo_drawer_visible = 1;
+			}
+		} else if (galleryDistFromBottom >= -490) {
+			// Hide the mini inspo drawer when scrolled above fix point
+			if (inspo_drawer_visible === 1) {
+				$inspoDrawer.addClass('hidden');
+				inspo_drawer_visible = 0;
+			}
+		} else {
+			// Hide the mini inspo drawer when scrolled below fix point
+			if (inspo_drawer_visible === 1) {
+				//$inspoDrawer.addClass('extra-collapsed');
+				$inspoDrawer.addClass('hidden');
+				inspo_drawer_visible = 0;
+			}
+		}
+	}
+	// ----------------- OPEN INSPO DRAWER -----------------
+	function open_inspo_drawer() {
+		if (inspo_drawer_active === 0) {
+			$inspoDrawer.removeClass('collapsed');
+			$inspoDrawer.addClass('active');
+			$overlay.addClass('active');
+			$overlay.scrollTop(10000); // Using overlay with invisible scrolling with a long empty div within. Setting scroll position here so neither scrolling up or down will be anywhere close to scroll limit.
+			//$('body').css({'height': window.innerHeight, 'overflow': 'hidden'});
+			inspo_drawer_active = 1;
+		}
+	}
+	// ----------------- CLOSE INSPO DRAWER -----------------
+	function close_inspo_drawer() {
+		if (inspo_drawer_active === 1) {
+			$inspoDrawer.addClass('collapsed');
+			$inspoDrawer.removeClass('active');
+			$overlay.removeClass('active');
+			// Reset Inspo Drawer State
+			$inspoBoardGroup.css({ 'left': 0 });
+			$inspoTab.removeClass('active');
+			$inspoDrawer.find('.tab:first-child').addClass('active');
+			inspo_active_board_num = 1;
+			$inspoContent.scrollTop(0);
+			//$('body').css({'height': 'auto', 'overflow': 'visible'});
+			inspo_drawer_active = 0;
+		}
+	}
+	// ----------------- SWITCH INSPO BOARD -----------------
+	function switch_inspo_board(num) {
+		inspo_active_board_num = num;
+		$inspoBoardGroup.css({ 'left': '-' + 100 * (num - 1) + '%' });
+		$inspoContent.animate({
+			scrollTop: 0
+		}, {
+			duration: 150,
+			queue: false
+		});
+	}
+	// =======================================================================================
+	// EVENTS
+	return {
+		setters: [function (_2) {
+			$ = _2['default'];
+		}, function (_4) {
+			lg = _4.lg;
+		}, function (_3) {
+			_ = _3['default'];
+		}],
+		execute: function () {
+			$gallery = $('.gallery');
+			$inspoDrawer = $('.inspo-drawer');
+			$inspoContent = $('.inspo-content');
+			$inspoTab = $inspoDrawer.find('.tab');
+			$inspoBoardGroup = $inspoDrawer.find('.product-groups');
+			$overlay = $('.overlay');
+
+			// =======================================================================================
+			// VARS
+			inspo_drawer_fix_point = 20;
+			inspo_drawer_visible = 0;
+			inspo_drawer_active = 0;
+			inspo_top_original = $inspoDrawer.css('top');
+			inspo_active_board_num = 1;
+			$inspoDrawer.on('click', function (e) {
+				open_inspo_drawer();
+			});
+			$overlay.on('click', function () {
+				close_inspo_drawer();
+			});
+			//$inspoClose
+			//	.on('click', function(){
+			//		close_inspo_drawer();
+			//	});
+			$inspoTab.on('click', function () {
+				var num = $(this).index() + 1;
+				if (num !== inspo_active_board_num) {
+					switch_inspo_board(num);
+					$inspoTab.removeClass('active');
+					$(this).addClass('active');
+				}
+			});
+			window.addEventListener('scroll', fix_inspo_drawer);
+			// =======================================================================================
+			// INIT
+			// =======================================================================================
+			// CHECK END
+			//lg(`{green{PDP Inspo loaded}}`);
 		}
 	};
 });
 
 //$inspoClose = $inspoDrawer.find('.close-button'),
+$__System.register('7', ['3', '4', '5'], function (_export) {
+	// =======================================================================================
+	// DOM
+	'use strict';
 
-//$productPricingActionGroup = $('.pricing-action-group'),
-$__System.register('6', ['3', '4', '5'], function (_export) {
+	var $, lg, _, $reviewCarousel, $review, $reviewReadMore, $filterButton, $reviewContentRow, $reviewFilters, review_expanded, review_carousel_scrolling, filters_open, touch_x_start, touch_x_end, lastMove;
+
+	// =======================================================================================
+	// FUNCTIONS
+	// ----------------- EXPAND REVIEW -----------------
+	function expandReview($this) {
+		var $review = $this.closest('.review');
+		$review.addClass('expanded');
+
+		var target_height = $this.parent().find('.review-message-content').outerHeight();
+		var $reviewMessage = $this.parent().find('.review-message');
+		$reviewMessage.css({ 'max-height': target_height });
+
+		review_expanded = 1;
+	}
+	// ----------------- CLOSE REVIEW -----------------
+	function collapseReviews() {
+		$review.map(function (v, k) {
+			var isExpanded = $(k).hasClass('expanded');
+			if (isExpanded) {
+				$(k).removeClass('expanded');
+				var $reviewMessage = $(k).find('.review-message');
+				$reviewMessage.css({ 'max-height': 160 });
+			}
+		});
+		review_expanded = 0;
+	}
+	// ----------------- TIMER TO CLOSE REVIEW -----------------
+	function timer_to_close_review() {
+		clearTimeout(review_carousel_scrolling);
+		review_carousel_scrolling = setTimeout(function () {
+			if (review_expanded) {
+				collapseReviews();
+			}
+		}, 600);
+	}
+	// ----------------- OPEN FILTER -----------------
+	function open_filters() {
+		$filterButton.addClass('active');
+		$reviewContentRow.addClass('expanded');
+		//$reviewFilters.css({'height': $reviewFilters.find('.filters').outerHeight()});
+	}
+	// ----------------- CLOSE FILTER -----------------
+	function close_filters() {
+		$filterButton.removeClass('active');
+		$reviewContentRow.removeClass('expanded');
+		//$reviewFilters.css({'height': 0});
+	}
+	// =======================================================================================
+	// EVENTS
+	return {
+		setters: [function (_2) {
+			$ = _2['default'];
+		}, function (_4) {
+			lg = _4.lg;
+		}, function (_3) {
+			_ = _3['default'];
+		}],
+		execute: function () {
+			$reviewCarousel = $('.review-carousel');
+			$review = $reviewCarousel.find('.review');
+			$reviewReadMore = $('.review-carousel').find('.review').find('.review-content').find('.read-more');
+			$filterButton = $('.review-summary').find('.review-filter-button');
+			$reviewContentRow = $('.row-review-filters');
+			$reviewFilters = $('.review-filters');
+
+			// =======================================================================================
+			// VARS
+			review_expanded = 0;
+			review_carousel_scrolling = undefined;
+			filters_open = 0;
+			touch_x_start = undefined;
+			touch_x_end = undefined;
+			lastMove = null;
+
+			$reviewReadMore.on('click', function () {
+				expandReview($(this));
+			});
+			$reviewCarousel.on('touchstart', function (e) {
+				touch_x_start = e.originalEvent.touches[0].pageX;
+			}).on('touchend', function (e) {
+				touch_x_end = e.originalEvent.changedTouches[0].pageX;
+				var diff = Math.abs(touch_x_start - touch_x_end);
+				if (diff > 90) {
+					timer_to_close_review();
+				}
+			});
+			$filterButton.on('click', function () {
+				if (filters_open === 0) {
+					open_filters();
+					filters_open = 1;
+				} else {
+					close_filters();
+					filters_open = 0;
+				}
+			});
+			// =======================================================================================
+			// INIT
+			// =======================================================================================
+			// CHECK END
+			//lg(`{green{PDP Reviews loaded}}`);
+		}
+	};
+});
+$__System.register('8', ['3', '4', '5'], function (_export) {
+	// =======================================================================================
+	// DOM
+	'use strict';
+
+	var $, lg, _, $freeGift, $freeGiftSummary, $freeGiftDetails, $freeGiftDetailsContents, free_gift_open;
+
+	// =======================================================================================
+	// FUNCTIONS
+	// ----------------- OPEN FREE GIFT -----------------
+	function open_free_gift() {
+		$freeGift.addClass('expanded');
+		$freeGiftDetails.css({ 'height': $freeGiftDetailsContents.outerHeight() });
+	}
+	// ----------------- CLOSE FREE GIFT -----------------
+	function close_free_gift() {
+		$freeGift.removeClass('expanded');
+		$freeGiftDetails.css({ 'height': 0 });
+	}
+	// =======================================================================================
+	// EVENTS
+	return {
+		setters: [function (_2) {
+			$ = _2['default'];
+		}, function (_4) {
+			lg = _4.lg;
+		}, function (_3) {
+			_ = _3['default'];
+		}],
+		execute: function () {
+			$freeGift = $('.free-gift');
+			$freeGiftSummary = $freeGift.find('.summary');
+			$freeGiftDetails = $freeGift.find('.details');
+			$freeGiftDetailsContents = $freeGiftDetails.find('.contents');
+
+			// =======================================================================================
+			// VARS
+			free_gift_open = 0;
+			$freeGiftSummary.on('click', function () {
+				if (free_gift_open === 0) {
+					open_free_gift();
+					free_gift_open = 1;
+				} else {
+					close_free_gift();
+					free_gift_open = 0;
+				}
+			});
+			// =======================================================================================
+			// INIT
+			// =======================================================================================
+			// CHECK END
+			//lg(`{green{PDP Free Gift loaded}}`);
+		}
+	};
+});
+$__System.register('9', ['3', '4', '5'], function (_export) {
+	// =======================================================================================
+	// DOM
+	'use strict';
+
+	var $, lg, _, $modelInfo, $modelInfoDetails, $modelInfoDetailsContents, $modelInfoHeadline, $sizeFitLink, model_info_open;
+
+	// =======================================================================================
+	// FUNCTIONS
+	// ----------------- OPEN MODEL INFO -----------------
+	function open_model_info() {
+		$modelInfo.addClass('expanded');
+		$modelInfoDetails.css({ 'height': $modelInfoDetailsContents.outerHeight() });
+	}
+	// ----------------- CLOSE MODEL INFO -----------------
+	function close_model_info() {
+		$modelInfo.removeClass('expanded');
+		$modelInfoDetails.css({ 'height': 0 });
+	}
+	// =======================================================================================
+	// EVENTS
+	return {
+		setters: [function (_2) {
+			$ = _2['default'];
+		}, function (_4) {
+			lg = _4.lg;
+		}, function (_3) {
+			_ = _3['default'];
+		}],
+		execute: function () {
+			$modelInfo = $('.model-info');
+			$modelInfoDetails = $modelInfo.find('.details');
+			$modelInfoDetailsContents = $modelInfoDetails.find('.contents');
+			$modelInfoHeadline = $modelInfo.find('.headline').find('.hide-expanded');
+			$sizeFitLink = $('.size-fit-link');
+
+			// =======================================================================================
+			// VARS
+			model_info_open = 0;
+			$modelInfo.on('click', function () {
+				if (model_info_open === 0) {
+					open_model_info();
+					model_info_open = 1;
+				} else {
+					close_model_info();
+					model_info_open = 0;
+				}
+			});
+			// =======================================================================================
+			// INIT
+			// =======================================================================================
+			// CHECK END
+			//lg(`{green{PDP Model Info loaded}}`);
+		}
+	};
+});
+$__System.register('a', ['3', '4', '5'], function (_export) {
+	// =======================================================================================
+	// DOM
+	'use strict';
+
+	var $, lg, _, $sizeFitLink;
+
+	return {
+		setters: [function (_2) {
+			$ = _2['default'];
+		}, function (_4) {
+			lg = _4.lg;
+		}, function (_3) {
+			_ = _3['default'];
+		}],
+		execute: function () {
+			$sizeFitLink = $('.size-fit-link');
+
+			// =======================================================================================
+			// VARS
+			// =======================================================================================
+			// FUNCTIONS
+			// =======================================================================================
+			// EVENTS
+			$sizeFitLink.on('click', function (e) {
+				e.preventDefault();
+			});
+			// =======================================================================================
+			// INIT
+			// =======================================================================================
+			// CHECK END
+			//lg(`{green{PDP Size Fit loaded}}`);
+		}
+	};
+});
+$__System.register('b', ['3', '4', '5'], function (_export) {
 	// =======================================================================================
 	// DOM
 	'use strict';
@@ -459,7 +698,7 @@ $__System.register('6', ['3', '4', '5'], function (_export) {
 		}
 	};
 });
-$__System.registerDynamic('7', [], true, function ($__require, exports, module) {
+$__System.registerDynamic('c', [], true, function ($__require, exports, module) {
     var global = this || self,
         GLOBAL = global;
     // shim for using process in browser
@@ -524,22 +763,22 @@ $__System.registerDynamic('7', [], true, function ($__require, exports, module) 
         return 0;
     };
 });
-$__System.registerDynamic("8", ["7"], true, function ($__require, exports, module) {
+$__System.registerDynamic("d", ["c"], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
-  module.exports = $__require("7");
+  module.exports = $__require("c");
 });
-$__System.registerDynamic('9', ['8'], true, function ($__require, exports, module) {
+$__System.registerDynamic('e', ['d'], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
-  module.exports = $__System._nodeRequire ? process : $__require('8');
+  module.exports = $__System._nodeRequire ? process : $__require('d');
 });
-$__System.registerDynamic("a", ["9"], true, function ($__require, exports, module) {
+$__System.registerDynamic("f", ["e"], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
-  module.exports = $__require("9");
+  module.exports = $__require("e");
 });
-$__System.registerDynamic('b', ['a'], true, function ($__require, exports, module) {
+$__System.registerDynamic('10', ['f'], true, function ($__require, exports, module) {
   /* */
   "format cjs";
 
@@ -4555,12 +4794,12 @@ $__System.registerDynamic('b', ['a'], true, function ($__require, exports, modul
         root._ = _;
       }
     }).call(this);
-  })($__require('a'));
+  })($__require('f'));
 });
-$__System.registerDynamic("5", ["b"], true, function ($__require, exports, module) {
+$__System.registerDynamic("5", ["10"], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
-  module.exports = $__require("b");
+  module.exports = $__require("10");
 });
 (function() {
 var define = $__System.amdDefine;
@@ -10565,9 +10804,9 @@ var define = $__System.amdDefine;
   });
   jQuery.fn.andSelf = jQuery.fn.addBack;
   if (typeof define === "function" && define.amd) {
-    define("c", [], function() {
+    define("11", [], function() {
       return jQuery;
-    }) && define("jquery", ["c"], function(m) {
+    }) && define("jquery", ["11"], function(m) {
       return m;
     });
   }
@@ -10591,7 +10830,7 @@ var define = $__System.amdDefine;
 })();
 (function() {
 var define = $__System.amdDefine;
-define("3", ["c"], function(main) {
+define("3", ["11"], function(main) {
   return main;
 });
 
@@ -10653,7 +10892,7 @@ $__System.register('4', ['3'], function (_export) {
 		}
 	};
 });
-$__System.register('d', ['3', '4', '5'], function (_export) {
+$__System.register('12', ['3', '4', '5'], function (_export) {
 	// =======================================================================================
 	// DOM
 	'use strict';
@@ -10712,7 +10951,7 @@ $__System.register('d', ['3', '4', '5'], function (_export) {
 		}
 	};
 });
-$__System.register('1', ['2', '4', '6', 'd'], function (_export) {
+$__System.register('1', ['2', '4', '6', '7', '8', '9', '12', 'a', 'b'], function (_export) {
 
 													// Global
 													//import './forms';
@@ -10723,7 +10962,7 @@ $__System.register('1', ['2', '4', '6', 'd'], function (_export) {
 													return {
 																										setters: [function (_2) {}, function (_) {
 																																							lg = _.lg;
-																										}, function (_3) {}, function (_d) {}],
+																										}, function (_3) {}, function (_4) {}, function (_5) {}, function (_6) {}, function (_7) {}, function (_a) {}, function (_b) {}],
 																										execute: function () {}
 													};
 });
